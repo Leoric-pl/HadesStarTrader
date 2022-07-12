@@ -15,11 +15,12 @@ class Stats():
     rs_score=[0,0,0,0,0,0,0,0,0,0,0]
     users=[]
     rs_company=[[],[],[],[],[],[],[],[],[],[],[]]
-
+    sum=0
 async def show_rs_stats(message):
   res="rs stats:\n"
   for i in range(Stats.rs_score.__len__()):
-    res=res+str(i+1)+' '+str(Stats.rs_score[i])+'\n'
+    Stats.sum+=Stats.rs_score[i]
+    if(Stats.rs_score[i]>0):res=res+str(i+1)+' '+str(Stats.rs_score[i])+'\n'
   await message.channel.send(res)
 async def show_user_stats(message):
   res='user stats:'
@@ -31,6 +32,8 @@ async def show_user_stats(message):
 async def show_all_stats(message):
   await show_user_stats(message)
   await show_rs_stats(message)
+  await message.channel.send('summary: '+str(Stats.sum))
+  Stats.sum=0
 async def is_user(username):
   for i in Stats.users:
     if i.name==username:return True
@@ -86,5 +89,19 @@ async def decide(message):
       await message.channel.send(' '.join(Stats.rs_company[rs])+str(rs+1))
       Stats.rs_company[rs].clear()
   elif message.content.lower()[0:3]=='rs-':
+    part2=message.content.lower()[3:].split()
+    rs=int(part2[0])-1
     Stats.rs_company[rs].remove(message.author.mention)
+    await message.channel.send(message.author.mention+' is no longer in queue')
+  elif message.content.lower()[0:3]=='rss':
+    part2=message.content.lower()[3:].split()
+    rs=int(part2[0])-1
+    res=' '.join(Stats.rs_company[rs])
+    await message.channel.send('here are registered:'+res)
+  elif message.content.lower()[0:5]=='rsall':
+    res="showing all queues:\n"
+    for i in range(11):
+      rest=' '.join(Stats.rs_company[i])
+      res+=str(i+1)+': here are registered:'+rest+'\n'
+    await message.channel.send(res)
     

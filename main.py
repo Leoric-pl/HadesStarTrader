@@ -13,7 +13,6 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 bot_prefix=':hs:'
 r=['reserach:']
-allm='history.txt'
 rpath='r.txt'
 spath='s.txt'
 s=['savage:']
@@ -29,12 +28,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    tab=[message.author.name,'said:',str(message.content.lower())]
-    toW=' '.join(tab)
-    work=open(allm,'a')
-    work.write('\n')
-    work.write(toW)
-    work.close()
     if message.content.lower()[0:4]==bot_prefix[0:4]:
         curmessage=message.content.lower()[4:]
         currentMessage=str(curmessage[2:]+'->'+message.author.name)

@@ -2,10 +2,9 @@
 from distutils import command
 import os
 from webserver import keep_alive
-
-
+import games
+import rs_event
 from discord.ext import commands
-
 import discord
 from dotenv import load_dotenv
 
@@ -14,6 +13,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 bot_prefix=':hs:'
 r=['reserach:']
+allm='history.txt'
 rpath='r.txt'
 spath='s.txt'
 s=['savage:']
@@ -29,12 +29,18 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    tab=[message.author.name,'said:',str(message.content.lower())]
+    toW=' '.join(tab)
+    work=open(allm,'a')
+    work.write('\n')
+    work.write(toW)
+    work.close()
     if message.content.lower()[0:4]==bot_prefix[0:4]:
         curmessage=message.content.lower()[4:]
         currentMessage=str(curmessage[2:]+'->'+message.author.name)
         print(currentMessage)
         if curmessage[0:2]=='r+':
-            r.append(currentMessage)
+            #r.append(currentMessage)
             work=open(rpath,'a')
             work.write('\n')
             work.write(currentMessage)
@@ -42,14 +48,14 @@ async def on_message(message):
             await message.channel.send('added succesfully')
             print(r.count(currentMessage))
         elif curmessage[0:2]=='s+':
-            s.append(currentMessage)
+            #s.append(currentMessage)
             work=open(spath,'a')
             work.write('\n')
             work.write(currentMessage)
             work.close()
             await message.channel.send('added succesfully')
         elif curmessage[0:2]=='r-':
-            r.remove(currentMessage)
+            #r.remove(currentMessage)
             work=open(rpath,'r')
             work1=open('new.txt','w')
             for line in work:
@@ -67,7 +73,7 @@ async def on_message(message):
             work1.close()
             await message.channel.send('removed succesfully')
         elif curmessage[0:2]=='s-':
-            s.remove(currentMessage)
+            #s.remove(currentMessage)
             work=open(spath,'r')
             work1=open('new.txt','w')
             for line in work:
@@ -85,15 +91,21 @@ async def on_message(message):
             work1.close()
             await message.channel.send('removed succesfully')
         elif curmessage[0:4]=='show':
+            await message.channel.send('reserach:')
             work=open('r.txt','r')
             for line in work: 
                 await message.channel.send(line)
             work.close()
+            await message.channel.send('savage:')
             work=open('s.txt','r')
             for line in work: 
                 await message.channel.send(line)
             work.close()
         else: await message.channel.send('something went wrong...')
-
+    elif message.content.lower()[0:2]==':g':
+      await games.games(message)
+    elif message.content.lower()[0:2]=='rs':
+      await rs_event.decide(message)
+    
 keep_alive()
 client.run(TOKEN)
